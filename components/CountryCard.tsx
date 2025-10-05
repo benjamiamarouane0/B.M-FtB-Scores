@@ -19,9 +19,10 @@ const CountryCard: React.FC<CountryCardProps> = ({ country, onSelectCountry }) =
       onKeyPress={(e) => e.key === 'Enter' && onSelectCountry(country)}
     >
       <img 
+        loading="lazy"
         src={country.flag || undefined} 
         alt={`${country.name} flag`} 
-        className="w-16 h-12 object-contain mb-3"
+        className="w-16 h-12 object-contain mb-3 bg-brand-secondary rounded-md"
         onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150/1F2937/E5E7EB?text=N/A'; }}
       />
       <p className="font-semibold text-sm text-brand-text leading-tight">{country.name}</p>

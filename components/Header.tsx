@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ searchQuery, onSearchChange, isSearchDi
       <div className="container mx-auto px-4 py-3 flex items-center justify-between max-w-5xl gap-4">
         <button
           onClick={onGoHome}
-          className="flex items-center space-x-3 flex-shrink-0 text-left focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-md p-1 -ml-1 transition-all"
+          className="flex items-center space-x-3 flex-shrink-0 text-left focus:outline-none focus:ring-2 focus:ring-brand-accent rounded-md p-1 -ml-1 transition-all"
           aria-label="Go to home page"
         >
           <LogoIcon className="w-8 h-8 text-brand-primary" />
@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ searchQuery, onSearchChange, isSearchDi
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 disabled={isSearchDisabled}
-                className="w-full bg-brand-background border border-brand-secondary text-brand-text placeholder-brand-text-secondary rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors duration-300 disabled:opacity-50"
+                className="w-full bg-brand-background border border-brand-secondary text-brand-text placeholder-brand-text-secondary rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-accent transition-colors duration-300 disabled:opacity-50"
                 aria-label="Search for a competition"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

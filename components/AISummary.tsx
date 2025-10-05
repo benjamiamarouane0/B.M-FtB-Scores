@@ -28,7 +28,7 @@ const AISummary: React.FC<AISummaryProps> = ({ match }) => {
   return (
     <div className="p-4 bg-brand-card-alt rounded-b-lg text-center">
       <div className="max-w-2xl mx-auto">
-        <SparklesIcon className="w-12 h-12 text-brand-primary mx-auto mb-4" />
+        <SparklesIcon className="w-12 h-12 text-brand-accent mx-auto mb-4" />
         <h3 className="text-xl font-bold text-brand-text mb-2">AI-Powered Match Summary</h3>
         <p className="text-brand-text-secondary mb-6">
           Get a narrative summary of the match, powered by generative AI. The summary will be based on the latest available match events.
@@ -37,7 +37,7 @@ const AISummary: React.FC<AISummaryProps> = ({ match }) => {
         <button
           onClick={handleGenerateSummary}
           disabled={isLoading}
-          className="bg-brand-primary hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+          className="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
         >
           {isLoading ? (
              <>

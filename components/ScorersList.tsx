@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Scorer } from '../types';
 
@@ -44,7 +45,7 @@ const ScorersList: React.FC<ScorersListProps> = ({ scorers, onSelectPlayer }) =>
                 </th>
                 <td className="px-6 py-3 hidden sm:table-cell">
                   <div className="flex items-center space-x-3">
-                    <img src={scorer.team.crest} alt={scorer.team.name} className="w-6 h-6 object-contain" />
+                    <img loading="lazy" src={scorer.team.crest} alt={scorer.team.name} className="w-6 h-6 object-contain bg-brand-secondary rounded-full" />
                     <span>{scorer.team.name}</span>
                   </div>
                 </td>

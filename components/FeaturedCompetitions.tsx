@@ -47,7 +47,8 @@ const FeaturedCompetitions: React.FC<FeaturedCompetitionsProps> = ({ competition
           <CompetitionCard 
             key={comp.id} 
             competition={comp} 
-            onSelectCompetition={onSelectCompetition} 
+            onSelectCompetition={onSelectCompetition}
+            variant="featured"
           />
         ))}
       </div>

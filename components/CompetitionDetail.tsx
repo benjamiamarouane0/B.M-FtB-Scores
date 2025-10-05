@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Competition, Match, Standing, CompetitionTeam, Scorer } from '../types';
 import { getMatches, getStandings, getCompetitionTeams, getCompetitionScorers } from '../services/matchService';
@@ -194,7 +195,7 @@ const CompetitionDetail: React.FC<CompetitionDetailProps> = ({ competition, onBa
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center">
-        <button onClick={onBack} className="text-brand-primary hover:text-green-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
+        <button onClick={onBack} className="text-brand-accent hover:text-sky-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
           <BackArrowIcon className="w-5 h-5" />
         </button>
         <h2 className="text-2xl sm:text-3xl font-bold text-brand-text">
@@ -228,7 +229,7 @@ const TabButton: React.FC<TabButtonProps> = ({ icon, label, isActive, onClick}) 
     <button
         onClick={onClick}
         className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors duration-300
-        ${isActive ? 'text-brand-primary border-b-2 border-brand-primary bg-brand-secondary' : 'text-brand-text-secondary hover:bg-brand-secondary/50'}`}
+        ${isActive ? 'text-brand-accent border-b-2 border-brand-accent bg-brand-secondary' : 'text-brand-text-secondary hover:bg-brand-secondary/50'}`}
         aria-label={label}
     >
         {React.cloneElement(icon, { className: 'w-5 h-5 flex-shrink-0' })}

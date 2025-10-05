@@ -61,19 +61,19 @@ const MatchesView: React.FC<MatchesViewProps> = ({ onSelectMatch }) => {
       <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 bg-brand-card p-3 rounded-xl shadow-lg">
         <button
           onClick={() => handleSetDatePreset('yesterday')}
-          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50 ${isPresetActive('yesterday') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
+          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50 ${isPresetActive('yesterday') ? 'bg-brand-accent text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
         >
           Yesterday
         </button>
         <button
           onClick={() => handleSetDatePreset('today')}
-          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50 ${isPresetActive('today') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
+          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50 ${isPresetActive('today') ? 'bg-brand-accent text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
         >
           Today
         </button>
         <button
           onClick={() => handleSetDatePreset('tomorrow')}
-          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50 ${isPresetActive('tomorrow') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
+          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50 ${isPresetActive('tomorrow') ? 'bg-brand-accent text-white shadow-md' : 'bg-brand-background text-brand-text-secondary hover:bg-brand-secondary hover:text-white'}`}
         >
           Tomorrow
         </button>
@@ -84,7 +84,7 @@ const MatchesView: React.FC<MatchesViewProps> = ({ onSelectMatch }) => {
                 type="date"
                 value={selectedDateString}
                 onChange={handleDateChange}
-                className="bg-brand-background border border-brand-secondary text-brand-text rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                className="bg-brand-background border border-brand-secondary text-brand-text rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-accent"
                 style={{ colorScheme: 'dark' }}
                 aria-label="Select a date"
             />

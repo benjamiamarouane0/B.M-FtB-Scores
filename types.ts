@@ -55,7 +55,7 @@ export interface Match {
   awayTeam: Team;
   homeScore: number | null;
   awayScore: number | null;
-  status: 'FT' | 'HT' | 'LIVE' | 'UPCOMING' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED';
+  status: 'FT' | 'HT' | 'LIVE' | 'UPCOMING' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED' | 'ET' | 'BREAK';
   minute?: number;
   date: string;
   league: string;
@@ -68,6 +68,8 @@ export interface Match {
   homeStats?: MatchStats;
   awayStats?: MatchStats;
   highlightsUrl?: string;
+  homePenalties?: number | null;
+  awayPenalties?: number | null;
 }
 
 export interface StandingTeam {

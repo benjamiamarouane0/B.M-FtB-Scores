@@ -21,9 +21,10 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, onSelectTeam, isSelectable = 
       onKeyPress={isSelectable ? (e) => e.key === 'Enter' && onSelectTeam(team) : undefined}
     >
       <img
+        loading="lazy"
         src={team.crest}
         alt={`${team.name} crest`}
-        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3"
+        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3 bg-brand-secondary rounded-md"
         onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150/1F2937/E5E7EB?text=N/A'; }}
       />
       <p className="font-semibold text-sm text-brand-text leading-tight">{team.name}</p>

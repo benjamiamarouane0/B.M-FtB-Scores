@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { TeamDetail as TeamDetailType, Match } from '../types';
 import { getTeamDetails } from '../services/matchService';
@@ -51,7 +52,7 @@ const TeamDetail: React.FC<TeamDetailProps> = ({ teamId, onBack, onSelectPlayer 
     return (
       <div className="text-center pt-16">
         <p className="text-red-400">{error || 'Team not found.'}</p>
-        <button onClick={onBack} className="mt-4 text-brand-primary">Go Back</button>
+        <button onClick={onBack} className="mt-4 text-brand-accent">Go Back</button>
       </div>
     );
   }
@@ -77,10 +78,10 @@ const TeamDetail: React.FC<TeamDetailProps> = ({ teamId, onBack, onSelectPlayer 
   return (
     <div className="animate-fade-in">
       <div className="flex items-center mb-4">
-        <button onClick={onBack} className="text-brand-primary hover:text-green-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
+        <button onClick={onBack} className="text-brand-accent hover:text-sky-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
           <BackArrowIcon className="w-6 h-6" />
         </button>
-        <img src={team.crest} alt={`${team.name} crest`} className="w-12 h-12 mr-4" />
+        <img loading="lazy" src={team.crest} alt={`${team.name} crest`} className="w-12 h-12 mr-4 bg-brand-secondary rounded-lg" />
         <h2 className="text-2xl sm:text-4xl font-bold text-brand-text">{team.name}</h2>
       </div>
 
@@ -99,7 +100,7 @@ const TabButton: React.FC<{ icon: React.ReactElement, label: string, isActive: b
     <button
         onClick={onClick}
         className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors duration-300
-        ${isActive ? 'text-brand-primary border-b-2 border-brand-primary bg-brand-secondary' : 'text-brand-text-secondary hover:bg-brand-secondary/50'}`}
+        ${isActive ? 'text-brand-accent border-b-2 border-brand-accent bg-brand-secondary' : 'text-brand-text-secondary hover:bg-brand-secondary/50'}`}
         aria-label={label}
     >
         {React.cloneElement(icon, { className: 'w-5 h-5 flex-shrink-0' })}

@@ -4,19 +4,18 @@ import { Match } from '../types';
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 export const generateMatchSummary = async (match: Match): Promise<string> => {
-  // FIX: Removed API key check, as per guidelines to assume it's always present.
   const eventsText = match.events.length > 0
     ? match.events.map(event =>
         `Minute ${event.minute}: ${event.type} for ${event.teamId === match.homeTeam.id ? match.homeTeam.name : match.awayTeam.name} by ${event.player}${event.detail ? ` (${event.detail})` : ''}.`
       ).join('\n')
-    : '';
+    : 'No specific key events were recorded.';
 
   const scoreText = match.homeScore !== null && match.awayScore !== null
     ? `${match.homeTeam.name} ${match.homeScore} - ${match.awayScore} ${match.awayTeam.name}`
     : 'The match has not started or is in progress.';
 
   const prompt = `
-    Generate a short, exciting, and narrative-style summary for a football match. Do not just list the events. Weave them into a story.
+    Generate a short, exciting, and narrative-style summary for a football match. Do not just list the events. Weave them into a story. Be descriptive and engaging.
 
     Match Details:
     - Home Team: ${match.homeTeam.name}
@@ -28,7 +27,7 @@ export const generateMatchSummary = async (match: Match): Promise<string> => {
     Key Events:
     ${eventsText}
 
-    Based on these details, write a compelling summary of the match. If the match is upcoming or has no events, provide a brief preview or state that the action hasn't started.
+    Based on these details, write a compelling summary of the match. If the match is upcoming or has no events, provide a brief preview or state that the action hasn't started or was uneventful.
   `;
 
   try {

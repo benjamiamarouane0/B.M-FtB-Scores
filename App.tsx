@@ -318,7 +318,7 @@ const App: React.FC = () => {
         return (
             <div>
                  <div className="flex items-center mb-6">
-                    <button onClick={() => { setSelectedCountryId(null); setCompetitions([]); }} className="text-brand-primary hover:text-green-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
+                    <button onClick={() => { setSelectedCountryId(null); setCompetitions([]); }} className="text-brand-accent hover:text-sky-300 transition-colors mr-4 p-2 rounded-full hover:bg-brand-secondary">
                         <BackArrowIcon className="w-5 h-5" />
                     </button>
                     <h2 className="text-2xl sm:text-3xl font-bold text-brand-text">
@@ -463,9 +463,9 @@ const App: React.FC = () => {
         <div className="container mx-auto max-w-5xl flex flex-col sm:flex-row justify-between items-center gap-4">
             <p>B.M FtB Scores &copy; 2024. All rights reserved.</p>
             <div className="flex items-center gap-4">
-                <button onClick={() => setActiveModal('about')} className="hover:text-brand-primary transition-colors">About Us</button>
-                <button onClick={() => setActiveModal('terms')} className="hover:text-brand-primary transition-colors">Terms & Conditions</button>
-                <button onClick={() => setActiveModal('contact')} className="hover:text-brand-primary transition-colors">Contact Us</button>
+                <button onClick={() => setActiveModal('about')} className="hover:text-brand-accent transition-colors">About Us</button>
+                <button onClick={() => setActiveModal('terms')} className="hover:text-brand-accent transition-colors">Terms & Conditions</button>
+                <button onClick={() => setActiveModal('contact')} className="hover:text-brand-accent transition-colors">Contact Us</button>
             </div>
         </div>
       </footer>

@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Person } from '../types';
 import { getPersonDetails } from '../services/matchService';
@@ -65,7 +66,7 @@ const PlayerDetail: React.FC<PlayerDetailProps> = ({ playerId, onBack, onSelectT
     return (
       <div className="text-center pt-16">
         <p className="text-red-400">{error || 'Player not found.'}</p>
-        <button onClick={onBack} className="mt-4 text-brand-primary">Go Back</button>
+        <button onClick={onBack} className="mt-4 text-brand-accent">Go Back</button>
       </div>
     );
   }
@@ -75,7 +76,7 @@ const PlayerDetail: React.FC<PlayerDetailProps> = ({ playerId, onBack, onSelectT
   return (
     <div className="animate-fade-in bg-brand-card-alt rounded-lg shadow-xl p-6">
       <div className="flex items-start mb-6">
-        <button onClick={onBack} className="text-brand-primary hover:text-green-300 transition-colors mr-4 p-2 -ml-2 rounded-full hover:bg-brand-secondary">
+        <button onClick={onBack} className="text-brand-accent hover:text-sky-300 transition-colors mr-4 p-2 -ml-2 rounded-full hover:bg-brand-secondary">
           <BackArrowIcon className="w-6 h-6" />
         </button>
         <div className="flex-grow">
@@ -96,7 +97,7 @@ const PlayerDetail: React.FC<PlayerDetailProps> = ({ playerId, onBack, onSelectT
                         onClick={!isNationalTeam ? () => onSelectTeam(player.currentTeam.id) : undefined}
                         aria-disabled={!!isNationalTeam}
                     >
-                        <img src={player.currentTeam.crest} alt={player.currentTeam.name} className="w-8 h-8"/>
+                        <img loading="lazy" src={player.currentTeam.crest} alt={player.currentTeam.name} className="w-8 h-8 bg-brand-secondary rounded-lg"/>
                         <span className="text-lg font-semibold">{player.currentTeam.name}</span>
                     </div>
                     {isNationalTeam && <p className="text-xs text-brand-text-secondary mt-1">Detailed team information for national teams is not available.</p>}

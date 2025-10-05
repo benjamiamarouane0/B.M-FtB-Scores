@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Match, Head2Head } from '../types';
 import { getMatchDetails, getMatchHead2Head } from '../services/matchService';
@@ -21,6 +20,7 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
   const [activeTab, setActiveTab] = useState<Tab>('stats');
   const [head2headData, setHead2headData] = useState<Head2Head | null>(null);
   const [h2hLoading, setH2hLoading] = useState<boolean>(false);
+  const [displayMinute, setDisplayMinute] = useState<number | undefined>(initialMatch.minute);
 
   const pageTitle = `${match.homeTeam.name} vs ${match.awayTeam.name} | B.M FtB Scores`;
   const pageDescription = `Live score and details for the ${match.league} match between ${match.homeTeam.name} and ${match.awayTeam.name}.`;
@@ -39,7 +39,7 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
 
   useEffect(() => {
     // Only poll for live or half-time matches
-    if (match.status !== 'LIVE' && match.status !== 'HT') {
+    if (match.status !== 'LIVE' && match.status !== 'HT' && match.status !== 'ET' && match.status !== 'BREAK') {
       return;
     }
 
@@ -48,11 +48,59 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
         setMatch(detailedMatch);
     };
 
-    const intervalId = setInterval(fetchLatestDetails, 30000); // Poll every 30 seconds
+    // Poll every 15 seconds for a more "live" feel.
+    const intervalId = setInterval(fetchLatestDetails, 15000); 
 
     // Cleanup interval on component unmount or when match status changes
     return () => clearInterval(intervalId);
   }, [match]);
+
+  useEffect(() => {
+    // When the match data from polling updates, sync the display minute
+    setDisplayMinute(match.minute);
+
+    if (match.status !== 'LIVE') {
+      return; // Not a live match, no timer needed
+    }
+
+    let timer: number;
+
+    // Case 1: The API provides the official minute.
+    if (match.minute) {
+      timer = window.setInterval(() => {
+        setDisplayMinute(currentMinute => {
+          if (currentMinute && currentMinute < 120) { // Allow for extra time
+            return currentMinute + 1;
+          }
+          return currentMinute;
+        });
+      }, 60000); // Increment every minute
+    } 
+    // Case 2: The API says the match is LIVE but doesn't provide a minute.
+    else {
+      const matchStartDate = new Date(match.date);
+      
+      const updateCalculatedMinute = () => {
+        const now = new Date();
+        const elapsedMilliseconds = now.getTime() - matchStartDate.getTime();
+        
+        if (elapsedMilliseconds < 0) {
+            setDisplayMinute(undefined);
+            return;
+        }
+
+        const elapsedMinutes = Math.floor(elapsedMilliseconds / 60000);
+        
+        setDisplayMinute(Math.min(elapsedMinutes, 120));
+      };
+
+      updateCalculatedMinute();
+      timer = window.setInterval(updateCalculatedMinute, 30000); // Update every 30 seconds
+    }
+
+    // Cleanup the interval
+    return () => clearInterval(timer);
+  }, [match.status, match.minute, match.date]);
 
   useEffect(() => {
     const fetchH2H = async () => {
@@ -83,6 +131,16 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
     }
   };
 
+  const getStatusText = () => {
+      switch (match.status) {
+          case 'LIVE': return <div className="text-sm mt-1 text-red-500 font-bold">{displayMinute ? `${displayMinute}'` : 'LIVE'}</div>;
+          case 'ET': return <div className="text-sm mt-1 text-red-500 font-bold">{match.minute ? `ET ${match.minute}'` : 'ET'}</div>;
+          case 'BREAK': return <div className="text-sm mt-1 text-yellow-400 font-bold">Break</div>;
+          case 'HT': return <div className="text-sm mt-1 text-yellow-400 font-bold">Half Time</div>;
+          case 'FT': return <div className="text-sm mt-1 text-brand-text-secondary font-bold">Full Time</div>;
+          default: return null;
+      }
+  }
 
   if (isLoadingDetails) {
     return (
@@ -100,7 +158,7 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
     <div className="bg-brand-card-alt rounded-lg shadow-xl overflow-hidden animate-fade-in">
       <div className="p-4 bg-brand-secondary">
         <div className="flex items-center justify-between mb-4">
-            <button onClick={onBack} className="text-brand-primary hover:text-green-300 transition-colors">
+            <button onClick={onBack} className="text-brand-accent hover:text-sky-300 transition-colors">
                 <BackArrowIcon className="w-6 h-6" />
             </button>
             <p className="text-sm text-brand-text-secondary">{match.league}</p>
@@ -114,14 +172,18 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
             onKeyPress={(e) => e.key === 'Enter' && onSelectTeam(match.homeTeam.id)}
             aria-label={`View details for ${match.homeTeam.name}`}
           >
-            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-primary transition-colors" title={match.homeTeam.name}>{match.homeTeam.name}</span>
-            <span className="font-bold text-xl sm:hidden group-hover:text-brand-primary transition-colors">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
+            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-accent transition-colors" title={match.homeTeam.name}>{match.homeTeam.name}</span>
+            <span className="font-bold text-xl sm:hidden group-hover:text-brand-accent transition-colors">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
             <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="w-10 h-10 rounded-full object-contain flex-shrink-0 group-hover:scale-110 transition-transform" />
           </div>
           <div className="text-center px-2 flex-shrink-0">
             <div className="text-4xl font-bold tracking-wider whitespace-nowrap">{`${match.homeScore ?? '-'} - ${match.awayScore ?? '-'}`}</div>
-            <div className="text-sm mt-1 text-red-500 font-bold">{match.status === 'LIVE' && (match.minute ? `${match.minute}'` : 'LIVE')}</div>
-            <div className="text-sm mt-1 text-brand-text-secondary font-bold">{match.status === 'FT' && 'Full Time'}</div>
+            {getStatusText()}
+            {match.status === 'FT' && match.homePenalties !== null && match.awayPenalties !== null && (
+                 <div className="text-xs mt-1 text-brand-text-secondary font-bold">
+                    Penalties: {match.homePenalties} - {match.awayPenalties}
+                 </div>
+            )}
           </div>
           <div
             className="flex items-center justify-start flex-1 space-x-3 truncate cursor-pointer group"
@@ -132,8 +194,8 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
             aria-label={`View details for ${match.awayTeam.name}`}
           >
             <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="w-10 h-10 rounded-full object-contain flex-shrink-0 group-hover:scale-110 transition-transform" />
-            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-primary transition-colors" title={match.awayTeam.name}>{match.awayTeam.name}</span>
-            <span className="font-bold text-xl sm:hidden group-hover:text-brand-primary transition-colors">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
+            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-accent transition-colors" title={match.awayTeam.name}>{match.awayTeam.name}</span>
+            <span className="font-bold text-xl sm:hidden group-hover:text-brand-accent transition-colors">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
           </div>
         </div>
       </div>
@@ -161,7 +223,7 @@ const TabButton: React.FC<TabButtonProps> = ({ icon, label, isActive, onClick}) 
     <button
         onClick={onClick}
         className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors duration-300
-        ${isActive ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-brand-text-secondary hover:bg-brand-secondary'}`}
+        ${isActive ? 'text-brand-accent border-b-2 border-brand-accent' : 'text-brand-text-secondary hover:bg-brand-secondary'}`}
         aria-label={label}
     >
         {React.cloneElement(icon, { className: 'w-5 h-5 flex-shrink-0' })}

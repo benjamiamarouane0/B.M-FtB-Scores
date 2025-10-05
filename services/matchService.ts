@@ -1,3 +1,4 @@
+
 import { Match, MatchEventType, MatchEvent, Area, Competition, Standing, CompetitionTeam, Scorer, TeamDetail, Person, Head2Head } from '../types';
 
 // Add a CORS proxy to bypass browser-side request restrictions from the API.
@@ -13,7 +14,19 @@ const headers = {
 
 // A helper function to wrap API requests and handle rate-limiting with a single retry.
 const apiRequest = async (url: string, options: RequestInit): Promise<Response> => {
-    const response = await fetch(url, options);
+    // To combat aggressive caching from browsers or proxies, we bust the cache.
+    // 1. Extract the original API URL from the proxied URL.
+    const encodedUrl = url.replace(PROXY_URL, '');
+    const decodedUrl = decodeURIComponent(encodedUrl);
+
+    // 2. Append a unique timestamp parameter to bypass any caches.
+    const urlObject = new URL(decodedUrl);
+    urlObject.searchParams.append('_cache_buster', new Date().getTime().toString());
+
+    // 3. Reconstruct the final proxied URL.
+    const finalUrl = `${PROXY_URL}${encodeURIComponent(urlObject.toString())}`;
+
+    const response = await fetch(finalUrl, options);
 
     if (response.ok) {
         return response;
@@ -30,7 +43,8 @@ const apiRequest = async (url: string, options: RequestInit): Promise<Response> 
             console.warn(`Rate limit hit. Waiting ${waitTime / 1000} seconds before retrying...`);
             
             await new Promise(resolve => setTimeout(resolve, waitTime));
-            const retryResponse = await fetch(url, options);
+            // Use the cache-busted URL for the retry as well
+            const retryResponse = await fetch(finalUrl, options);
 
             if (retryResponse.ok) {
                 return retryResponse;
@@ -71,11 +85,14 @@ interface ApiMatch {
     fullTime: { home: number | null; away: number | null } | null;
     halfTime: { home: number | null; away: number | null } | null;
     regularTime: { home: number | null; away: number | null } | null;
+    extraTime: { home: number | null; away: number | null } | null;
+    penalties: { home: number | null; away: number | null } | null;
   } | null;
   homeTeam: { id: number; name: string; crest: string };
   awayTeam: { id: number; name: string; crest: string };
-  goals?: { minute: number; scorer: { name: string }; team: { id: number }; type: string }[];
+  goals?: { minute: number; scorer: { name: string }; assist?: { name: string }; team: { id: number }; type: string }[];
   bookings?: { minute: number; player: { name: string }; team: { id: number }; card: 'YELLOW' | 'RED' }[];
+  substitutions?: { minute: number; playerIn: { name: string }; playerOut: { name: string }; team: { id: number } }[];
 }
 
 interface ApiArea {
@@ -106,16 +123,17 @@ interface ApiCompetition {
 
 // Transforms a match object from the API into the application's Match type.
 const transformApiMatch = (apiMatch: ApiMatch): Match => {
-  const status = statusMap[apiMatch.status] || 'UPCOMING';
+  let status: Match['status'] = statusMap[apiMatch.status] || 'UPCOMING';
   
-  let homeScore = apiMatch.score?.fullTime?.home ?? null;
-  let awayScore = apiMatch.score?.fullTime?.away ?? null;
-
-  // For live matches, fullTime score is null, so we use regularTime or halfTime.
-  if (status === 'LIVE' || status === 'HT') {
-      homeScore = apiMatch.score?.regularTime?.home ?? apiMatch.score?.halfTime?.home ?? null;
-      awayScore = apiMatch.score?.regularTime?.away ?? apiMatch.score?.halfTime?.away ?? null;
+  if ((status === 'LIVE' || status === 'HT') && apiMatch.minute && apiMatch.minute > 90) {
+    status = status === 'LIVE' ? 'ET' : 'BREAK';
   }
+
+  // The 'fullTime' score from the API reflects the score at the current state of the match.
+  // For 'LIVE' matches, it's the current score. For 'HT', it's the halftime score. For 'FT', it's the final score.
+  // This corrects the issue where halftime or regular-time scores were shown incorrectly for live matches.
+  const homeScore = apiMatch.score?.fullTime?.home ?? null;
+  const awayScore = apiMatch.score?.fullTime?.away ?? null;
   
   return {
     id: apiMatch.id,
@@ -137,6 +155,8 @@ const transformApiMatch = (apiMatch: ApiMatch): Match => {
     league: apiMatch.competition.name,
     area: apiMatch.area,
     events: [], // Detailed events are fetched separately
+    homePenalties: apiMatch.score?.penalties?.home,
+    awayPenalties: apiMatch.score?.penalties?.away,
   };
 };
 
@@ -188,6 +208,7 @@ export const getArea = async (id: number): Promise<Area> => {
 
 export const getAllCompetitions = async (): Promise<Competition[]> => {
     try {
+        // Dynamically import the competitions data to code-split it from the main bundle.
         const { competitionsData } = await import('./competitionsData');
         const data = competitionsData;
         return data.competitions
@@ -289,12 +310,19 @@ export const getMatchDetails = async (match: Match): Promise<Match> => {
 
         const events: MatchEvent[] = [];
         (apiMatch.goals || []).forEach(goal => {
+            let detail = '';
+            if (goal.type === 'PENALTY') {
+                detail = 'Penalty';
+            } else if (goal.assist && goal.assist.name) {
+                detail = `Assist: ${goal.assist.name}`;
+            }
+
             events.push({
                 minute: goal.minute,
                 type: MatchEventType.GOAL,
                 player: goal.scorer.name,
                 teamId: goal.team.id,
-                detail: goal.type === 'PENALTY' ? 'Penalty' : undefined,
+                detail: detail || undefined,
             });
         });
 
@@ -305,6 +333,16 @@ export const getMatchDetails = async (match: Match): Promise<Match> => {
                 player: booking.player.name,
                 teamId: booking.team.id,
             });
+        });
+        
+        (apiMatch.substitutions || []).forEach(sub => {
+            events.push({
+                minute: sub.minute,
+                type: MatchEventType.SUBSTITUTION,
+                player: sub.playerOut.name,
+                teamId: sub.team.id,
+                detail: `In: ${sub.playerIn.name}`,
+            })
         });
 
         events.sort((a, b) => a.minute - b.minute);

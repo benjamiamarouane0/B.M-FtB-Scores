@@ -1,20 +1,37 @@
+
+
 import React, { useMemo } from 'react';
 import { Match, MatchEvent, MatchEventType } from '../types';
-import { GoalIcon, YellowCardIcon, RedCardIcon } from './icons';
+import { GoalIcon, YellowCardIcon, RedCardIcon, SubstitutionIcon } from './icons';
 
 interface MatchStatsViewProps {
   match: Match;
 }
 
-const StatBar = ({ label, homeValue, awayValue, icon }: { label: string, homeValue: number, awayValue: number, icon: React.ReactNode }) => {
+const StatsDisplay: React.FC<{ homeGoals: number, awayGoals: number }> = ({ homeGoals, awayGoals }) => {
+    const stats = [
+        { label: 'Goals', icon: <GoalIcon className="w-5 h-5" />, home: homeGoals, away: awayGoals },
+    ];
+
     return (
-        <div className="flex items-center justify-between text-lg font-semibold py-3 border-b border-brand-secondary">
-            <span className="w-1/5 text-center">{homeValue}</span>
-            <div className="w-3/5 flex items-center justify-center space-x-2 text-brand-text-secondary">
-                {icon}
-                <span>{label}</span>
+        <div className="grid grid-cols-3 gap-x-2 sm:gap-x-4 text-center items-center py-4">
+            {/* Home stats */}
+            <div className="space-y-3">
+                {stats.map(stat => <div key={`${stat.label}-home`} className="text-2xl font-bold text-brand-text">{stat.home}</div>)}
             </div>
-            <span className="w-1/5 text-center">{awayValue}</span>
+            {/* Labels */}
+            <div className="space-y-3">
+                {stats.map(stat => (
+                    <div key={stat.label} className="flex items-center justify-center gap-2 text-sm font-semibold text-brand-text-secondary">
+                        {stat.icon}
+                        <span>{stat.label}</span>
+                    </div>
+                ))}
+            </div>
+            {/* Away stats */}
+            <div className="space-y-3">
+                {stats.map(stat => <div key={`${stat.label}-away`} className="text-2xl font-bold text-brand-text">{stat.away}</div>)}
+            </div>
         </div>
     );
 };
@@ -27,79 +44,105 @@ const EventIcon: React.FC<{ type: MatchEventType }> = ({ type }) => {
             return <YellowCardIcon className="w-4 h-5 bg-yellow-400 rounded-sm" />;
         case MatchEventType.RED_CARD:
             return <RedCardIcon className="w-4 h-5 bg-red-600 rounded-sm" />;
+        case MatchEventType.SUBSTITUTION:
+            return <SubstitutionIcon className="w-5 h-5 text-blue-400" />;
         default:
             return null;
     }
 };
 
 const MatchStatsView: React.FC<MatchStatsViewProps> = ({ match }) => {
-  const { homeEvents, awayEvents, stats } = useMemo(() => {
-    const homeStats = { goals: 0, yellowCards: 0, redCards: 0 };
-    const awayStats = { goals: 0, yellowCards: 0, redCards: 0 };
-    const homeEvents: MatchEvent[] = [];
-    const awayEvents: MatchEvent[] = [];
+  const { timeline } = useMemo(() => {
+    let firstHalfEvents: MatchEvent[] = [];
+    let secondHalfEvents: MatchEvent[] = [];
+    
+    let halftimeMinute = 45;
+    // Find the latest minute in the first half to account for stoppage time
+    match.events.forEach(event => {
+        if(event.minute <= 45 && event.minute > halftimeMinute) {
+            halftimeMinute = event.minute;
+        }
+    });
 
     match.events.forEach(event => {
-      if (event.teamId === match.homeTeam.id) {
-        homeEvents.push(event);
-        if (event.type === MatchEventType.GOAL) homeStats.goals++;
-        if (event.type === MatchEventType.YELLOW_CARD) homeStats.yellowCards++;
-        if (event.type === MatchEventType.RED_CARD) homeStats.redCards++;
+      if (event.minute <= halftimeMinute) {
+          firstHalfEvents.push(event);
       } else {
-        awayEvents.push(event);
-        if (event.type === MatchEventType.GOAL) awayStats.goals++;
-        if (event.type === MatchEventType.YELLOW_CARD) awayStats.yellowCards++;
-        if (event.type === MatchEventType.RED_CARD) awayStats.redCards++;
+          secondHalfEvents.push(event);
       }
     });
-    return { homeEvents, awayEvents, stats: { homeStats, awayStats } };
-  }, [match.events, match.homeTeam.id]);
 
-  const renderTimeline = () => {
-    if (match.events.length === 0) {
-      return null;
-    }
-    return (
-      <div className="mt-8">
-        <h4 className="text-lg font-bold text-center mb-4 text-brand-primary">Match Timeline</h4>
-        <div className="grid grid-cols-2 gap-x-4">
-            {/* Home Team Events */}
-            <div className="space-y-3">
-                {homeEvents.map((event, index) => (
-                    <div key={`home-${index}`} className="flex items-center justify-end text-right gap-2 bg-brand-background p-2 rounded-md">
-                        <div className="flex-1">
-                            <p className="font-semibold text-brand-text">{event.player}</p>
-                            {event.detail && <p className="text-xs text-brand-text-secondary">{event.detail}</p>}
-                        </div>
-                        <EventIcon type={event.type} />
-                        <span className="font-bold w-8 text-center">{event.minute}'</span>
+    const homeEvents = (events: MatchEvent[]) => events.filter(e => e.teamId === match.homeTeam.id);
+    const awayEvents = (events: MatchEvent[]) => events.filter(e => e.teamId === match.awayTeam.id);
+
+    return { 
+        timeline: {
+            firstHalf: {
+                home: homeEvents(firstHalfEvents),
+                away: awayEvents(firstHalfEvents),
+            },
+            secondHalf: {
+                home: homeEvents(secondHalfEvents),
+                away: awayEvents(secondHalfEvents),
+            }
+        }
+    };
+  }, [match]);
+
+  const renderTimelineEvents = (home: MatchEvent[], away: MatchEvent[]) => (
+    <div className="grid grid-cols-2 gap-x-4">
+        <div className="space-y-3">
+            {home.map((event, index) => (
+                <div key={`home-${event.minute}-${index}`} className="flex items-center justify-end text-right gap-2 bg-brand-background p-2 rounded-md">
+                    <div className="flex-1">
+                        <p className="font-semibold text-brand-text">{event.player}</p>
+                        {event.detail && <p className="text-xs text-brand-text-secondary">{event.detail}</p>}
                     </div>
-                ))}
-            </div>
-            {/* Away Team Events */}
-            <div className="space-y-3">
-                 {awayEvents.map((event, index) => (
-                    <div key={`away-${index}`} className="flex items-center justify-start text-left gap-2 bg-brand-background p-2 rounded-md">
-                        <span className="font-bold w-8 text-center">{event.minute}'</span>
-                        <EventIcon type={event.type} />
-                        <div className="flex-1">
-                            <p className="font-semibold text-brand-text">{event.player}</p>
-                            {event.detail && <p className="text-xs text-brand-text-secondary">{event.detail}</p>}
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    <EventIcon type={event.type} />
+                    <span className="font-bold w-8 text-center">{event.minute}'</span>
+                </div>
+            ))}
         </div>
+        <div className="space-y-3">
+             {away.map((event, index) => (
+                <div key={`away-${event.minute}-${index}`} className="flex items-center justify-start text-left gap-2 bg-brand-background p-2 rounded-md">
+                    <span className="font-bold w-8 text-center">{event.minute}'</span>
+                    <EventIcon type={event.type} />
+                    <div className="flex-1">
+                        <p className="font-semibold text-brand-text">{event.player}</p>
+                        {event.detail && <p className="text-xs text-brand-text-secondary">{event.detail}</p>}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+  );
+
+
+  const renderTimeline = () => (
+      <div>
+        <h4 className="text-lg font-bold text-center mb-4 text-brand-accent">Match Timeline</h4>
+        {renderTimelineEvents(timeline.firstHalf.home, timeline.firstHalf.away)}
+        
+        {(timeline.secondHalf.home.length > 0 || timeline.secondHalf.away.length > 0) && (
+            <div className="text-center my-4 py-2 bg-brand-background rounded-full font-bold text-brand-text-secondary text-sm">
+                Half Time
+            </div>
+        )}
+
+        {renderTimelineEvents(timeline.secondHalf.home, timeline.secondHalf.away)}
       </div>
-    );
-  };
+  );
   
   return (
     <div className="p-4 bg-brand-card-alt rounded-b-lg">
-        <StatBar label="Goals" homeValue={stats.homeStats.goals} awayValue={stats.awayStats.goals} icon={<GoalIcon className="w-5 h-5"/>} />
-        <StatBar label="Yellow Cards" homeValue={stats.homeStats.yellowCards} awayValue={stats.awayStats.yellowCards} icon={<YellowCardIcon className="w-4 h-5 bg-yellow-400 rounded-sm"/>} />
-        <StatBar label="Red Cards" homeValue={stats.homeStats.redCards} awayValue={stats.awayStats.redCards} icon={<RedCardIcon className="w-4 h-5 bg-red-600 rounded-sm"/>} />
-        {renderTimeline()}
+        <StatsDisplay homeGoals={match.homeScore ?? 0} awayGoals={match.awayScore ?? 0} />
+        {match.events.length > 0 && (
+          <>
+            <div className="border-t border-brand-secondary my-4"></div>
+            {renderTimeline()}
+          </>
+        )}
     </div>
   );
 };

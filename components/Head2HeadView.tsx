@@ -17,7 +17,7 @@ const Head2HeadView: React.FC<Head2HeadViewProps> = ({ data, onSelectMatch }) =>
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold mb-4 text-brand-primary">Matchup History</h3>
+        <h3 className="text-xl font-bold mb-4 text-brand-accent">Matchup History</h3>
         <div className="bg-brand-background rounded-lg p-4 grid grid-cols-3 divide-x divide-brand-secondary text-center">
           <div className="px-2">
             <p className="text-2xl font-bold">{aggregates.homeTeam.wins}</p>

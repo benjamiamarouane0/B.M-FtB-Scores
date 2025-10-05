@@ -37,11 +37,11 @@ const AreaFilter: React.FC<AreaFilterProps> = ({
       <button
         key="top-competitions-view"
         onClick={onSelectTopCompetitions}
-        className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50
+        className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50
           ${
             isTopCompetitionsViewActive
-              ? 'bg-brand-primary text-white shadow-md'
-              : 'bg-transparent text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
+              ? 'bg-brand-accent text-white shadow-md'
+              : 'bg-brand-card-alt text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
           }`}
         aria-pressed={isTopCompetitionsViewActive}
       >
@@ -50,11 +50,11 @@ const AreaFilter: React.FC<AreaFilterProps> = ({
       <button
         key="matches-view"
         onClick={onSelectMatches}
-        className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50
+        className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50
           ${
             isMatchesViewActive
-              ? 'bg-brand-primary text-white shadow-md'
-              : 'bg-transparent text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
+              ? 'bg-brand-accent text-white shadow-md'
+              : 'bg-brand-card-alt text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
           }`}
         aria-pressed={isMatchesViewActive}
       >
@@ -71,11 +71,11 @@ const AreaFilter: React.FC<AreaFilterProps> = ({
         <button
           key={country.id}
           onClick={() => onSelectCountry(country.id)}
-          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50 flex items-center space-x-2
+          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50 flex items-center space-x-2
             ${
               selectedCountryId === country.id
-                ? 'bg-brand-primary text-white shadow-md'
-                : 'bg-transparent text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
+                ? 'bg-brand-accent text-white shadow-md'
+                : 'bg-brand-card-alt text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
             }`}
           aria-pressed={selectedCountryId === country.id}
         >
@@ -88,11 +88,11 @@ const AreaFilter: React.FC<AreaFilterProps> = ({
         <button
           key={area.id}
           onClick={() => onSelectArea(area.id)}
-          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50 flex items-center space-x-2
+          className={`px-4 py-2 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-opacity-50 flex items-center space-x-2
             ${
               selectedAreaId === area.id
-                ? 'bg-brand-primary text-white shadow-md'
-                : 'bg-transparent text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
+                ? 'bg-brand-accent text-white shadow-md'
+                : 'bg-brand-card-alt text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
             }`}
           aria-pressed={selectedAreaId === area.id}
         >
