@@ -98,10 +98,11 @@ const TeamDetail: React.FC<TeamDetailProps> = ({ teamId, onBack, onSelectPlayer 
 const TabButton: React.FC<{ icon: React.ReactElement, label: string, isActive: boolean, onClick: () => void }> = ({ icon, label, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-300
+        className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors duration-300
         ${isActive ? 'text-brand-primary border-b-2 border-brand-primary bg-brand-secondary' : 'text-brand-text-secondary hover:bg-brand-secondary/50'}`}
+        aria-label={label}
     >
-        {React.cloneElement(icon, { className: 'w-5 h-5' })}
+        {React.cloneElement(icon, { className: 'w-5 h-5 flex-shrink-0' })}
         <span>{label}</span>
     </button>
 );

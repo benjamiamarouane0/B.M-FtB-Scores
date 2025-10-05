@@ -139,7 +139,7 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, 
       </div>
       
       <div className="flex border-b border-brand-secondary">
-        <TabButton icon={<StatsIcon/>} label="Stats & Timeline" isActive={activeTab === 'stats'} onClick={() => setActiveTab('stats')} />
+        <TabButton icon={<StatsIcon/>} label="Stats" isActive={activeTab === 'stats'} onClick={() => setActiveTab('stats')} />
         <TabButton icon={<H2HIcon/>} label="H2H" isActive={activeTab === 'h2h'} onClick={() => setActiveTab('h2h')} />
       </div>
 
@@ -160,10 +160,11 @@ interface TabButtonProps {
 const TabButton: React.FC<TabButtonProps> = ({ icon, label, isActive, onClick}) => (
     <button
         onClick={onClick}
-        className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-300
+        className={`flex-1 py-3 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors duration-300
         ${isActive ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-brand-text-secondary hover:bg-brand-secondary'}`}
+        aria-label={label}
     >
-        {React.cloneElement(icon, { className: 'w-5 h-5' })}
+        {React.cloneElement(icon, { className: 'w-5 h-5 flex-shrink-0' })}
         <span>{label}</span>
     </button>
 )
