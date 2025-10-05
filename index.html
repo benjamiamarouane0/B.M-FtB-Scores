@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>B.M FtB Scores</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta id="meta-description" name="description" content="An amazing web app for football scores, highlights, and match details. Get live updates and detailed statistics for the ultimate football fan experience with B.M FtB Scores." />
+    <meta name="keywords" content="football, soccer, live scores, football highlights, match details, statistics, B.M FtB Scores" />
+    <meta name="author" content="B.M FtB Scores" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <!-- TODO: Add the production URL here -->
+    <meta property="og:url" content="https://" />
+    <meta id="og-title" property="og:title" content="B.M FtB Scores | Live Football Scores & Highlights" />
+    <meta id="og-description" property="og:description" content="An amazing web app for football scores, highlights, and match details. Get live updates and detailed statistics for the ultimate football fan experience with B.M FtB Scores." />
+    <!-- TODO: Add a preview image (e.g., 1200x630) to the project root -->
+    <meta property="og:image" content="/social-preview.png" /> 
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <!-- TODO: Add the production URL here -->
+    <meta property="twitter:url" content="https://" />
+    <meta id="twitter-title" property="twitter:title" content="B.M FtB Scores | Live Football Scores & Highlights" />
+    <meta id="twitter-description" property="twitter:description" content="An amazing web app for football scores, highlights, and match details. Get live updates and detailed statistics for the ultimate football fan experience with B.M FtB Scores." />
+    <!-- TODO: Add a preview image (e.g., 1200x630) to the project root -->
+    <meta property="twitter:image" content="/social-preview.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#00A36C',
+              'brand-secondary': '#1E293B',
+              'brand-background': '#111827',
+              'brand-card': '#1F2937',
+              'brand-card-alt': '#374151',
+              'brand-text': '#E5E7EB',
+              'brand-text-secondary': '#9CA3AF',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+              'scale-in': 'scaleIn 0.2s ease-out forwards',
+              'spin': 'spin 1.5s linear infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: 0 },
+                '100%': { opacity: 1 },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.95)', opacity: 0 },
+                '100%': { transform: 'scale(1)', opacity: 1 },
+              },
+               spin: {
+                from: { transform: 'rotate(0deg)' },
+                to: { transform: 'rotate(360deg)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.22.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-brand-background">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
