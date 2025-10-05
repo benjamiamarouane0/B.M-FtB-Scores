@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { Match } from '../types';
 
@@ -44,30 +43,41 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, onSelectMatch }) => {
     <div
       className="bg-brand-card-alt rounded-lg p-4 shadow-lg hover:bg-brand-secondary transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
       onClick={() => onSelectMatch(match)}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${match.homeTeam.name} vs ${match.awayTeam.name}`}
+      onKeyPress={(e) => e.key === 'Enter' && onSelectMatch(match)}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center justify-end w-2/5 space-x-3 text-right">
-          <span className="font-semibold text-lg hidden sm:inline">{match.homeTeam.name}</span>
-           <span className="font-semibold text-lg sm:hidden">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
-          <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="w-8 h-8 rounded-full object-contain" />
+      <div className="grid grid-cols-[1fr_auto_auto_auto_1fr] gap-x-2 sm:gap-x-4 items-center">
+        {/* Home Team Name */}
+        <div className="truncate text-right font-semibold text-base sm:text-lg text-brand-text">
+            <span className="hidden sm:inline-block" title={match.homeTeam.name}>{match.homeTeam.name}</span>
+            <span className="sm:hidden">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
         </div>
-        
-        <div className="text-center w-1/5">
-          {match.status !== 'UPCOMING' && match.homeScore !== null ? (
-             <div className="text-2xl font-bold tracking-wider">{`${match.homeScore} - ${match.awayScore}`}</div>
+
+        {/* Home Team Logo */}
+        <img src={match.homeTeam.logo} alt={`${match.homeTeam.name} logo`} className="w-8 h-8 rounded-full object-contain flex-shrink-0" />
+
+        {/* Score */}
+        <div className="text-center px-2">
+          {match.status !== 'UPCOMING' && match.homeScore !== null && match.awayScore !== null ? (
+             <div className="text-2xl font-bold tracking-wider whitespace-nowrap">{`${match.homeScore} - ${match.awayScore}`}</div>
           ) : (
              <div className="text-xl font-bold text-brand-text-secondary">-</div>
           )}
           <div className="text-sm mt-1">{getStatusElement()}</div>
         </div>
-
-        <div className="flex items-center justify-start w-2/5 space-x-3">
-          <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="w-8 h-8 rounded-full object-contain" />
-           <span className="font-semibold text-lg hidden sm:inline">{match.awayTeam.name}</span>
-          <span className="font-semibold text-lg sm:hidden">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
+        
+        {/* Away Team Logo */}
+        <img src={match.awayTeam.logo} alt={`${match.awayTeam.name} logo`} className="w-8 h-8 rounded-full object-contain flex-shrink-0" />
+        
+        {/* Away Team Name */}
+        <div className="truncate text-left font-semibold text-base sm:text-lg text-brand-text">
+            <span className="hidden sm:inline-block" title={match.awayTeam.name}>{match.awayTeam.name}</span>
+            <span className="sm:hidden">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
         </div>
       </div>
-       <p className="text-center text-xs text-brand-text-secondary mt-3">{match.league}</p>
+       <p className="text-center text-xs text-brand-text-secondary mt-3 truncate" title={match.league}>{match.league}</p>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Match, Head2Head } from '../types';
 import { getMatchDetails, getMatchHead2Head } from '../services/matchService';
@@ -9,11 +10,12 @@ import useTitle from './useTitle';
 interface MatchDetailProps {
   match: Match;
   onBack: () => void;
+  onSelectTeam: (teamId: number) => void;
 }
 
 type Tab = 'stats' | 'h2h';
 
-const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack }) => {
+const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack, onSelectTeam }) => {
   const [match, setMatch] = useState<Match>(initialMatch);
   const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<Tab>('stats');
@@ -103,21 +105,35 @@ const MatchDetail: React.FC<MatchDetailProps> = ({ match: initialMatch, onBack }
             </button>
             <p className="text-sm text-brand-text-secondary">{match.league}</p>
         </div>
-        <div className="flex items-center justify-between text-white">
-          <div className="flex items-center justify-end w-2/5 space-x-3 text-right">
-            <span className="font-bold text-xl hidden sm:inline">{match.homeTeam.name}</span>
-             <span className="font-bold text-xl sm:hidden">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
-            <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="w-10 h-10 rounded-full object-contain" />
+        <div className="flex items-center justify-between text-white gap-x-2 sm:gap-x-4">
+          <div
+            className="flex items-center justify-end flex-1 space-x-3 text-right truncate cursor-pointer group"
+            onClick={() => onSelectTeam(match.homeTeam.id)}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && onSelectTeam(match.homeTeam.id)}
+            aria-label={`View details for ${match.homeTeam.name}`}
+          >
+            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-primary transition-colors" title={match.homeTeam.name}>{match.homeTeam.name}</span>
+            <span className="font-bold text-xl sm:hidden group-hover:text-brand-primary transition-colors">{match.homeTeam.name.substring(0,3).toUpperCase()}</span>
+            <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="w-10 h-10 rounded-full object-contain flex-shrink-0 group-hover:scale-110 transition-transform" />
           </div>
-          <div className="text-center w-1/5">
-            <div className="text-4xl font-bold tracking-wider">{`${match.homeScore ?? '-'} - ${match.awayScore ?? '-'}`}</div>
+          <div className="text-center px-2 flex-shrink-0">
+            <div className="text-4xl font-bold tracking-wider whitespace-nowrap">{`${match.homeScore ?? '-'} - ${match.awayScore ?? '-'}`}</div>
             <div className="text-sm mt-1 text-red-500 font-bold">{match.status === 'LIVE' && (match.minute ? `${match.minute}'` : 'LIVE')}</div>
             <div className="text-sm mt-1 text-brand-text-secondary font-bold">{match.status === 'FT' && 'Full Time'}</div>
           </div>
-          <div className="flex items-center justify-start w-2/5 space-x-3">
-            <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="w-10 h-10 rounded-full object-contain" />
-            <span className="font-bold text-xl hidden sm:inline">{match.awayTeam.name}</span>
-            <span className="font-bold text-xl sm:hidden">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
+          <div
+            className="flex items-center justify-start flex-1 space-x-3 truncate cursor-pointer group"
+            onClick={() => onSelectTeam(match.awayTeam.id)}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && onSelectTeam(match.awayTeam.id)}
+            aria-label={`View details for ${match.awayTeam.name}`}
+          >
+            <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="w-10 h-10 rounded-full object-contain flex-shrink-0 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xl hidden sm:inline truncate group-hover:text-brand-primary transition-colors" title={match.awayTeam.name}>{match.awayTeam.name}</span>
+            <span className="font-bold text-xl sm:hidden group-hover:text-brand-primary transition-colors">{match.awayTeam.name.substring(0,3).toUpperCase()}</span>
           </div>
         </div>
       </div>

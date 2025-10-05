@@ -274,7 +274,7 @@ const App: React.FC = () => {
     }
 
     if (selectedMatch) {
-      return <MatchDetail match={selectedMatch} onBack={() => setSelectedMatch(null)} />;
+      return <MatchDetail match={selectedMatch} onBack={() => setSelectedMatch(null)} onSelectTeam={setSelectedTeamId} />;
     }
     
     if (selectedCompetition) {
